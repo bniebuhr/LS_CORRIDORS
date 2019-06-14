@@ -235,7 +235,7 @@ class Corridors(wx.Panel):
         
         self.influence_factor = 1.1 # In case we are going to close the computing window, its size is increased by 110% the scale paramater in each side
         self.influenceprocess = self.influence_factor * float(self.escalas[0]) # Distance beyond the window size of a given ST pair, in meters
-        self.influenceprocess_boll = False # Boolean - are we going to close the computing window around each ST map?
+        self.influenceprocess_boll = True # Boolean - are we going to close the computing window around each ST map?
         
         # Auxiliary variables
         
