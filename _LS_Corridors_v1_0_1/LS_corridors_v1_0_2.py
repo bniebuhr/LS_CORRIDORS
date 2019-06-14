@@ -1196,6 +1196,9 @@ class Corridors(wx.Panel):
                 self.ChecktTry=True
                 # Change to output dir
                 os.chdir(self.OutDir_files_TXT)
+
+                # Start defininf the region as the input map
+                grass.run_command('g.region', rast=self.OutArqResist,verbose=False)
                 
                 # Select a pair from the list and prepare vectors for processing
                 while self.ChecktTry==True:
@@ -1274,10 +1277,13 @@ class Corridors(wx.Panel):
                 self.var_target_y_b_int=float(self.var_target_y)
                 
                
-                # Set region defined by the limits of source and target points + fixed distance (self.influenceprocess)
-                #  This reduces simulation time, since map processing may be restricted to 
-                #  the region where points are located
-                defineregion("source_shp", "target_shp", self.influenceprocess) 
+                # If the user wants to consider only the region around ST points, this region
+                #  is selected as GRASS region; otherwise, the whole resistance map region is set
+                #  as GRASS region
+                if self.influenceprocess_boll:
+                  defineregion("source_shp","target_shp", self.influenceprocess)  
+                else:
+                  grass.run_command('g.region', rast=self.OutArqResist,verbose=False)
                 
                 # Name of the corridor output map
                 self.mapa_corredores_sem0=self.NEXPER_FINAL+'_'+'var_'+str(ruido_float).replace('.', '_')+'_'+'scale_'+str(esc)+'_'+'S_'+self.S1FORMAT+"_T_"+self.T1FORMAT
@@ -1320,8 +1326,13 @@ class Corridors(wx.Panel):
                 #---------------------------------------------#
                 cont=0
                 for i in range(self.Nsimulations):
-                    # Set region defined by the limits of source and target points + fixed distance (self.influenceprocess)
-                    defineregion("source_shp","target_shp", self.influenceprocess)
+                    # If the user wants to consider only the region around ST points, this region
+                    #  is selected as GRASS region; otherwise, the whole resistance map region is set
+                    #  as GRASS region
+                    if self.influenceprocess_boll:
+                      defineregion("source_shp","target_shp", self.influenceprocess)  
+                    else:
+                      grass.run_command('g.region', rast=self.OutArqResist,verbose=False)
                     
                     # Selecting resistance map
                     self.form_08='mapa_resist = '+self.listafinal[cont]
@@ -1476,8 +1487,13 @@ class Corridors(wx.Panel):
                           self.form_07='resist_aux2 = if(isnull(resist_aux), 10000000, resist_aux)'
                           grass.mapcalc(self.form_07, overwrite = True, quiet = True)
                           
-                          # Sets GRASS region
-                          defineregion("source_shp","target_shp", self.influenceprocess)
+                          # If the user wants to consider only the region around ST points, this region
+                          #  is selected as GRASS region; otherwise, the whole resistance map region is set
+                          #  as GRASS region
+                          if self.influenceprocess_boll:
+                            defineregion("source_shp","target_shp", self.influenceprocess)  
+                          else:
+                            grass.run_command('g.region', rast=self.OutArqResist,verbose=False)
                           
                           # Generating cumulative cost raster map for linking S and T points
                           grass.run_command('r.cost', flags='k', input='resist_aux2', output='custo_aux_cost', start_points='pnts_aleat_S', stop_points='pnts_aleat_T', overwrite = True)
