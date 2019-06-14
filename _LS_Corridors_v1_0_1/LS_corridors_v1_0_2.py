@@ -1575,7 +1575,8 @@ class Corridors(wx.Panel):
                     grass.read_command ('v.to.db', map=self.outline1, option='length', type='line', col='dist', units='me', overwrite = True)
                     # Exports output vector
                     os.chdir(self.outdir)
-                    grass.run_command('v.out.ogr', input = self.outline1, output = self.outline1+'.shp', verbose = False, type = 'line')              
+                    grass.run_command('v.out.ogr', input = self.outline1, output = self.outline1+'.shp', 
+                      format = 'ESRI_Shapefile', verbose = False, type = 'line')              
                     grass.run_command('g.remove', type="vect", name=self.outline1, flags='f')              
                     cont=cont+1
                     
